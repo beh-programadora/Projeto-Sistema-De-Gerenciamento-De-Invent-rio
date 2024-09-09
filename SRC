@@ -1,0 +1,106 @@
+-- Criação do banco de dados
+CREATE DATABASE InventarioArmazem;
+USE InventarioArmazem;
+
+-- Criação da tabela Categorias
+CREATE TABLE Categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+-- Criação da tabela Fornecedores
+CREATE TABLE Fornecedores (
+    id_fornecedor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    contato VARCHAR(100),
+    endereco TEXT
+);
+
+-- Criação da tabela Produtos com a coluna id_fornecedor
+CREATE TABLE Produtos (
+    id_produto INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    preco DECIMAL(10, 2) NOT NULL,
+    quantidade_estoque INT NOT NULL,
+    id_categoria INT,
+    id_fornecedor INT,
+    FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria),
+    FOREIGN KEY (id_fornecedor) REFERENCES Fornecedores(id_fornecedor)
+);
+
+-- Inserção de Categorias
+INSERT INTO Categorias (nome) VALUES
+('Eletrônicos'),
+('Móveis'),
+('Roupas');
+
+-- Inserção de Fornecedores
+INSERT INTO Fornecedores (nome, contato, endereco) VALUES
+('Tech Supply Co.', 'contato@techsupply.com', 'Av. das Tecnologias, 123, São Paulo, SP'),
+('Móveis e Cia', 'vendas@moveisecia.com', 'Rua dos Móveis, 456, Rio de Janeiro, RJ'),
+('Fashion Trend', 'atendimento@fashiontrend.com', 'Praça da Moda, 789, Belo Horizonte, MG');
+
+-- Inserção de Produtos
+INSERT INTO Produtos (nome, descricao, preco, quantidade_estoque, id_categoria, id_fornecedor) VALUES
+('Smartphone X', 'Smartphone com tela de 6.5 polegadas e câmera de 12MP', 1500.00, 50, 1, 1),
+('Mesa de Escritório', 'Mesa de madeira para escritório com gavetas', 300.00, 20, 2, 2),
+('Camiseta Polo', 'Camiseta polo em algodão, disponível em várias cores', 50.00, 100, 3, 3),
+('Laptop Pro', 'Laptop com 16GB de RAM e 512GB SSD', 4000.00, 30, 1, 1),
+('Sofá de 3 Lugares', 'Sofá confortável em tecido antialérgico', 1200.00, 15, 2, 2);
+
+SELECT 
+    p.id_produto AS ID_Produto,
+    p.nome AS Nome_Produto,
+    p.descricao AS Descricao,
+    p.preco AS Preco,
+    p.quantidade_estoque AS Quantidade_Estoque,
+    c.nome AS Categoria,
+    f.nome AS Fornecedor
+FROM 
+    Produtos p
+JOIN 
+    Categorias c ON p.id_categoria = c.id_categoria
+JOIN 
+    Fornecedores f ON p.id_fornecedor = f.id_fornecedor;
+
+SELECT 
+    p.id_produto AS ID_Produto,
+    p.nome AS Nome_Produto,
+    p.descricao AS Descricao,
+    p.preco AS Preco,
+    p.quantidade_estoque AS Quantidade_Estoque
+FROM 
+    Produtos p
+JOIN 
+    Categorias c ON p.id_categoria = c.id_categoria
+WHERE 
+    c.nome = 'Eletrônicos';
+
+SELECT DISTINCT
+    f.id_fornecedor AS ID_Fornecedor,
+    f.nome AS Nome_Fornecedor,
+    f.contato AS Contato,
+    f.endereco AS Endereco
+FROM 
+    Fornecedores f
+JOIN 
+    Produtos p ON f.id_fornecedor = p.id_fornecedor
+WHERE 
+    p.preco > 1000.00;
+
+UPDATE Produtos
+SET preco = 1600.00
+WHERE id_produto = 1;
+
+UPDATE Categorias
+SET nome = 'Móveis de Escritório'
+WHERE id_categoria = 2;
+
+UPDATE Fornecedores
+SET endereco = 'Rua das Novidades, 789, Rio de Janeiro, RJ'
+WHERE id_fornecedor = 2;
+
+DELETE FROM Produtos
+WHERE id_produto = 3;
+
